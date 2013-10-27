@@ -1,0 +1,278 @@
+﻿EASIER DEBUGGING
+When you run the project from the Debug menu, Visual Studio will create a new browser window to display
+the application. As a speedier alternative, you can keep your application open in a stand-alone browser
+window. To do this, assuming you have launched the debugger at least once already, right-click the IIS
+Express icon in the system tray and select the URL for your app from the pop-up menus, as shown in the
+following screenshot.
+This way, each time you make a change to the application, you will not need to launch a new debugging
+session to see the effect. You simply compile the solution in Visual Studio by pressing F6 or choosing Build
+􀃊 Build Solution, and then switch to your browser window and reload the Web page.
+
+
+
+For this example, we are going to do
+something different, which is to create a custom controller factory.
+
+essentialtools projesinde dependencyresolver kullanmıştık.
+
+Global.asax.cs'da değişiklik yap(dependencyresolver)
+
+
+Creating an Abstract Repository
+we want to keep the persistence logic separate from the domain model entities—and we do this by using the repository pattern.
+
+
+Notice that we do not need to use the Razor text or @:
+elements to display the view data. This is because each of the content lines in the code body either is a
+Razor directive or starts with an HTML element.
+
+
+
+CREATE TABLE Products
+(
+[ProductID] INT NOT NULL PRIMARY KEY IDENTITY,
+[Name] NVARCHAR(100) NOT NULL,
+[Description] NVARCHAR(500) NOT NULL,
+[Category] NVARCHAR(50) NOT NULL,
+[Price] DECIMAL(16, 2) NOT NULL
+)
+
+Creating the Entity Framework Context
+
+
+To take advantage of the code-first feature, we need to create a class that is derived from
+System.Data.Entity.DbContext. This class then automatically defines a property for each table in the
+database that we want to work with.
+
+The name of the property specifies the table, and the type parameter of the DbSet result specifies the
+model that the Entity Framework should use to represent rows in that table. In our case, the property
+name is Products and the type parameter is Product. We want the Product model type to be used to
+represent rows in the Products table.
+
+We need to tell the Entity Framework how to connect to the database, and we do that by adding a
+database connection string to the Web.config file in the SportsStore.WebUI project with the same name as
+the context class, as shown in Listing 7-12.
+
+
+
+Adding Pagination
+
+PagingInfo
+
+A view model is not part of our domain model. It is just a convenient class for passing data between
+the controller and the view. To emphasize this, we have put this class in the SportsStore.WebUI project to
+keep it separate from the domain model classes.
+
+An extension method is available for use only when the namespace that contains it is in scope. In a
+code file, this is done with a using statement; but for a Razor view, we must add a configuration entry to
+the Web.config file, or add a @using statement to the view itself. There are, confusingly, two Web.config
+files in a Razor MVC project: the main one, which resides in the root directory of the application project,
+and the view-specific one, which is in the Views folder.The change we need to make is to the
+Views/Web.config file
+
+
+
+Creating a Partial View
+is a fragment of content that is embedded in another view.
+
+The RenderPartial method does not return HTML markup like most other helper methods. Instead, it
+writes content directly to the response stream, which is why we must call it like a complete line of C#, using a
+semicolon. This is slightly more efficient than buffering the rendered HTML from the partial view, since it will be
+written to the response stream anyway. If you prefer a more consistent syntax, you can use the Html.Partial
+method, which does the same as the RenderPartial method, but returns an HTML fragment and can be used as
+@Html.Partial("ProductSummary", p).
+
+
+
+
+
+Adding Navigation Controls
+
+
+Building a Category Navigation Menu
+
+The ASP.NET MVC Framework has the concept of child actions, which are perfect for creating items
+such as a reusable navigation control.A child action relies on the HTML helper method called
+RenderAction, which lets you include the output from an arbitrary action method in the current view.
+In
+this case, we can create a new controller (we will call ours NavController) with an action method (Menu, in
+this case) that renders a navigation menu and inject the output from that method into the layout.
+
+
+The RenderAction method writes its content directly to the response stream, just like the RenderPartial
+method introduced in Chapter 5. This means that the method returns void, and therefore cannot be used with a
+regular Razor @ tag. Instead, we must enclose the call to the method inside a Razor code block (and remember to
+terminate the statement with a semicolon). You can use the Action method as an alternative if you do not like this
+code-block syntax.
+
+
+renderpartial cs renderaction ?????????
+
+
+
+
+
+Correcting the Page Count
+
+
+
+
+
+CREATING MULTIPLE HTML FORMS IN A PAGE
+Using the Html.BeginForm helper in each product listing means that every Add to cart button is rendered
+in its own separate HTML form element. This may be surprising if you have been developing with ASP.NET
+Web Forms, which imposes a limit of one form per page. ASP.NET MVC does not limit the number of forms
+per page, and you can have as many as you need.
+There is no technical requirement for us to create a form for each button. However, since each form will
+postback to the same controller method, but with a different set of parameter values, it is a nice and simple
+way to deal with the button presses.
+
+
+Session state objects are stored in the memory of the ASP.NET server by default, but you can configure a
+range of different storage approaches, including using a SQL database.
+
+
+SportsStore: Completing the Cart
+
+Using Model Binding
+
+The MVC Framework uses a system called model binding to create C# objects from HTTP requests in
+order to pass them as parameter values to action methods.
+
+
+
+
+Creating a Custom Model Binder
+
+The IModelBinder interface defines one method: BindModel. The two parameters are provided to make
+creating the domain model object possible.
+
+We need to tell the MVC Framework that it can use our CartModelBinder class to create instances of
+Cart. We do this in the Application_Start method of Global.asax.
+
+We have removed the GetCart method and added a Cart parameter to each of the action methods.
+When the MVC Framework receives a request that requires, say, the AddToCart method to be invoked, it
+begins by looking at the parameters for the action method. It looks at the list of binders available and tries
+to find one that can create instances of each parameter type. Our custom binder is asked to create a Cart
+object, and it does so by working with the session state feature. Between our binder and the default
+binder, the MVC Framework is able to create the set of parameters required to call the action method,
+allowing us to refactor the controller so that it has no knowledge of how Cart objects are created when
+requests are received.
+
+There are a few benefits to using a custom model binder like this. The first is that we have separated
+the logic used to create a Cart from that of the controller, which allows us to change the way we store Cart
+objects without needing to change the controller. The second benefit is that any controller class that
+works with Cart objects can simply declare them as action method parameters and take advantage of the
+custom model binder. The third benefit, and the one we think is most important, is that we can now unit
+test the Cart controller without needing to mock a lot of ASP.NET plumbing.
+
+
+Completing the Cart
+
+
+Removing Items from the Cart
+
+We can use the strongly typed Html.HiddenFor helper method to create a hidden field for the ReturnUrl
+model property, but we need to use the string-based Html.Hidden helper to do the same for the Product ID field. If
+we had written Html.HiddenFor(x => line.Product.ProductID), the helper would render a hidden field with the
+name line.Product.ProductID. The name of the field would not match the names of the parameters for the
+CartController.RemoveFromCart action method, which would prevent the default model binders from working, so
+the MVC Framework would not be able to call the method.
+
+
+
+Submitting Orders
+
+Extending the Domain Model
+
+
+
+
+
+
+
+
+
+
+Notice that we did not need to test that we can identify valid shipping details. This is handled for us
+automatically by the model binder using the attributes we applied to the properties of the ShippingDetails
+class.
+
+
+TempData["message"] = string.Format("{0} has been saved", product.Name);
+This is a key/value dictionary similar to the session data and view bag features we have used previously.
+The key difference from session data is that temp data is deleted at the end of the HTTP request.
+
+
+
+
+Enabling Client-Side Validation
+
+
+client-side validation is a useful feature, but if, for some reason,
+you do not want to validate at the client, you need to use the following statements:
+...
+HtmlHelper.ClientValidationEnabled = false;
+HtmlHelper.UnobtrusiveJavaScriptEnabled = false;
+...
+If you put these statements in a view or in a controller, then client-side validation is disabled only for
+the current action. You can disable client-side validation for the entire application by using those
+statements in the Application_Start method of Global.asax or by adding values to the Web.config file,
+like this:
+...
+<configuration>
+<appSettings>
+<add key="ClientValidationEnabled" value="false"/>
+<add key="UnobtrusiveJavaScriptEnabled" value="false"/>
+</appSettings>
+</configuration>
+
+
+
+Creating New Products
+
+@using (Html.BeginForm("Edit", "Admin")) {
+@Html.EditorForModel()
+<input type="submit" value="Save" />
+@Html.ActionLink("Cancel and return to List", "Index")
+}
+Now the form will always be posted to the Edit action, regardless of which action rendered it. We can
+create products by clicking the Add a new product link and filling in the details, as shown in Figure 10-14.
+
+
+
+Securing the Administration Controller
+
+<authentication mode="Forms">
+<forms loginUrl="~/Account/Login" timeout="2880"/>
+</authentication>
+...
+As you can see, forms authentication is enabled automatically in an MVC application created with the
+Basic template. The loginUrl attribute tells ASP.NET which URL users should be directed to when they
+need to authenticate themselves—in this case, the ~/Account/Login page. The timeout attribute specifies
+how long a user remains authenticated for after logging in. By default, this is 48 hours (2,880 minutes).
+
+
+
+Creating the Authentication Provider
+
+
+Image Uploads
+
+
+
+the MVC Framework looks in the folder named after the controller and then in the /Views/Shared
+folder. This means that we can put views that will be used by more than one controller in the
+/Views/Shared folder and the framework will find them.
+
+
+
+
+
+
+
+
+
+
+
+
