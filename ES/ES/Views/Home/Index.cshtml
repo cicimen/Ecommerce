@@ -1,0 +1,109 @@
+﻿@{Layout = null;}
+@using ES.Models
+@model dynamic
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<title>Eticaret Sistemi Anasayfa</title>
+	<link rel="stylesheet" href="/Content/themes/Theme1/css/style.css" type="text/css" media="all" />
+	<!--[if lte IE 6]>
+		<style type="text/css" media="screen">
+			.tabbed { height:420px; }
+		</style>
+	<![endif]-->
+	
+	<script src="/Content/themes/Theme1/js/jquery-1.4.1.min.js" type="text/javascript"></script>
+	<script src="/Content/themes/Theme1/js/jquery.jcarousel.pack.js" type="text/javascript"></script>
+	<script src="/Content/themes/Theme1/js/jquery.slide.js" type="text/javascript"></script>
+	<script src="/Content/themes/Theme1/js/jquery-func.js" type="text/javascript"></script>
+</head>
+<body>
+    <!-- Top -->
+    <div id="top">
+        <div class="shell">
+            <!-- Header -->
+            <div id="header">
+                <h1 id="logo">
+                    <a href="#">ETicaret Sistemi</a></h1>
+                @{Html.RenderPartial("Navigation");}
+            </div>
+            <!-- End Header -->
+            <!-- Slider -->
+            <div id="slider">
+                <div id="slider-holder">
+                    <ul>
+                        <li><a href="#">
+                            <img src="/Content/themes/Theme1/css/images/slide1.jpg" alt="" /></a></li>
+                        <li><a href="#">
+                            <img src="/Content/themes/Theme1/css/images/slide2.jpg" alt="" /></a></li>
+                        <li><a href="#">
+                            <img src="/Content/themes/Theme1/css/images/slide1.jpg" alt="" /></a></li>
+                        <li><a href="#">
+                            <img src="/Content/themes/Theme1/css/images/slide2.jpg" alt="" /></a></li>
+                        <li><a href="#">
+                            <img src="/Content/themes/Theme1/css/images/slide1.jpg" alt="" /></a></li>
+                        <li><a href="#">
+                            <img src="/Content/themes/Theme1/css/images/slide2.jpg" alt="" /></a></li>
+                    </ul>
+                </div>
+                <div id="slider-nav">
+                    <a href="#" class="prev">İleri</a> <a href="#" class="next">Geri</a>
+                </div>
+            </div>
+            <!-- End Slider -->
+        </div>
+    </div>
+    <!-- Top -->
+    <!-- Main -->
+    <div id="main">
+        <div class="shell">
+            <!-- Search, etc -->
+            @{Html.RenderPartial("Options");}
+            <!-- End Search, etc -->
+            <!-- Content -->
+            <div id="content">
+                <!-- Tabs -->
+                <div class="tabs">
+                    @{Html.RenderPartial("CategoryList");}
+                </div>
+                <!-- Tabs -->
+                <!-- Container -->
+                <div id="container">
+                    <div class="tabbed">
+                        <!-- First Tab Content -->
+                        @foreach (var category in ViewBag.CategoryList)
+                        {
+                            <div class="tab-content" style="display: block; float: left;">
+                                <div class="items">
+                                    <div class="cl">
+                                        &nbsp;</div>
+                                    <ul>
+                                        @foreach (var item in Model.ProductList.Where(d => d.CategoryId == category.Id).Take(8))
+                                        {
+                                            <li>
+                                                @{Html.RenderPartial("SimpleProduct", item);}
+                                            </li>
+                                        }
+                                    </ul>
+                                    <div class="cl">
+                                        &nbsp;</div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <!-- Brands -->
+                    @{Html.RenderPartial("BrandList");}
+                    <!-- End Brands -->
+                    <!-- Footer -->
+                    @{Html.RenderPartial("Footer");}
+                    <!-- End Footer -->
+                </div>
+                <!-- End Container -->
+            </div>
+            <!-- End Content -->
+        </div>
+    </div>
+    <!-- End Main -->
+</body>
+</html>
