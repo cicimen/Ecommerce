@@ -7,6 +7,8 @@ using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 
+using WebMatrix.WebData;
+
 namespace OdeToFood
 {
     // Note: For instructions on enabling IIS6 or IIS7 classic mode, 
@@ -16,6 +18,8 @@ namespace OdeToFood
     {
         protected void Application_Start()
         {
+            WebSecurity.InitializeDatabaseConnection("DefaultConnection", "UserProfile", "UserId", "UserName", autoCreateTables: true);
+
             AreaRegistration.RegisterAllAreas();
 
             WebApiConfig.Register(GlobalConfiguration.Configuration);
