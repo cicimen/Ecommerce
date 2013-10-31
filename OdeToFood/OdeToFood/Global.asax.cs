@@ -8,6 +8,8 @@ using System.Web.Optimization;
 using System.Web.Routing;
 
 using WebMatrix.WebData;
+using System.Data.Entity.Migrations;
+using OdeToFood.Migrations;
 
 namespace OdeToFood
 {
@@ -18,7 +20,13 @@ namespace OdeToFood
     {
         protected void Application_Start()
         {
-            WebSecurity.InitializeDatabaseConnection("DefaultConnection", "UserProfile", "UserId", "UserName", autoCreateTables: true);
+            var migrator = new DbMigrator(new Configuration());
+            migrator.Update();
+
+            if (!WebSecurity.Initialized)
+            {
+                WebSecurity.InitializeDatabaseConnection("DefaultConnection", "UserProfile", "UserId", "UserName", autoCreateTables: true);
+            }
 
             AreaRegistration.RegisterAllAreas();
 
