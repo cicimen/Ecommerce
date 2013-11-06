@@ -45,7 +45,7 @@ namespace OdeToFood.Controllers
             return Content("Hello");
         }
 
-        [OutputCache(CacheProfile="Long", VaryByHeader="X-Requested-With;Accept-Language", Location=OutputCacheLocation.Server)]
+        [OutputCache(CacheProfile="Short", VaryByHeader="X-Requested-With;Accept-Language", Location=OutputCacheLocation.Server)]
         public ActionResult Index(string searchTerm = null,int page=1)
         {
             //var model = // _db.Restaurants.ToList();
