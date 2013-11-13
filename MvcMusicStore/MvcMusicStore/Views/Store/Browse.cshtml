@@ -11,7 +11,9 @@
         @foreach (var album in Model.Albums) 
         { 
             <li> 
-                <a href="@Url.Action("Details", new { id = album.AlbumId })"> <img alt="@album.Title" src="@album.AlbumArtUrl" /> <span>@album.Title</span> </a> 
+                <a href="@Url.Action("Details", new { id = album.AlbumId })">
+                     <img alt="@album.Title" src="@album.AlbumArtUrl" /> <span>@album.Title</span> 
+                </a> 
 
            </li> 
         }
